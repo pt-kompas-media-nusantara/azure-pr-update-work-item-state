@@ -1,0 +1,12 @@
+name: "Update work item state when PR is merged, opened, closed or when branch is created"
+description: "This action will update work item state within Azure DevOps when the PR is merged, opened, closed or when branch is created"
+author: "Marcin Gadomski"
+branding:
+  icon: "git-pull-request"
+  color: "black"
+outputs:
+  id:
+    description: "Work item state updated"
+runs:
+  using: "node20"
+  main: "index.js"
