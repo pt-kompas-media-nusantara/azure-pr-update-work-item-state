@@ -23,11 +23,12 @@ async function getPrInfo() {
 }
 exports.getPrInfo = getPrInfo;
 
+// Wajib AB#
 function getWorkItemIdFromPrBody(fullPrTitle) {
     try {
         var foundMatches = fullPrTitle.match(/AB#[(0-9)]*/g);
         if (!foundMatches) {
-            throw new Error("No AB# found in the title");
+            throw new Error("No AB# found in the title. Please define Related WorkItem ID in PR Message: e.g: AB#12345");
         }
         var workItemIds = foundMatches.map(match => match.match(/[0-9]+/)[0]);
 
@@ -36,30 +37,34 @@ function getWorkItemIdFromPrBody(fullPrTitle) {
 
         return workItemIds;
     } catch (err) {
-        console.log("Couldn't obtain work item ID from PR Body Message, Please Defining Related WorkItem ID in PR Message: e.g: AB#12345");
+        console.log(err.message);
         core.setFailed(err.toString());
     }
 }
 exports.getWorkItemIdFromPrBody = getWorkItemIdFromPrBody;
 
+// Opsional TASK#
 function getTaskItemIdFromPrBody(fullPrTitle) {
     try {
         var foundMatches = fullPrTitle.match(/TASK#[0-9]*/g);
-        if (!foundMatches) {
-            throw new Error("No TASK# found in the title");
-        }
-        var workItemIds = foundMatches.map(match => match.match(/[0-9]+/)[0]);
+        var workItemIds = [];
 
-        console.log("foundMatches TASK : " + foundMatches);
-        console.log("workItemIds TASK : " + workItemIds);
+        if (foundMatches) {
+            workItemIds = foundMatches.map(match => match.match(/[0-9]+/)[0]);
+            console.log("foundMatches TASK : " + foundMatches);
+            console.log("workItemIds TASK : " + workItemIds);
+        } else {
+            console.log("No TASK# found in the title, but it's optional.");
+        }
 
         return workItemIds;
     } catch (err) {
-        console.log("Couldn't obtain work item ID from PR Body Message, Please Defining Related WorkItem ID in PR Message: e.g: TASK#12345");
+        console.log("Error while processing TASK# in PR Body");
         core.setFailed(err.toString());
     }
 }
 exports.getTaskItemIdFromPrBody = getTaskItemIdFromPrBody;
+
 
 // ------------------------------------------------------
 async function handleOpenedPr(workItemId) {
